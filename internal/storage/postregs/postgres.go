@@ -1,15 +1,15 @@
 package mysql
 
 import (
-	"Gymondo/platform/mysql"
+	"Gymondo/platform/postgres"
 	"context"
 )
 
 type Repository struct {
-	database *mysql.Connection
+	database *postgres.Connection
 }
 
-func CreateRepository(db *mysql.Connection) (*Repository, error) {
+func CreateRepository(db *postgres.Connection) (*Repository, error) {
 	return &Repository{
 		database: db,
 	}, nil

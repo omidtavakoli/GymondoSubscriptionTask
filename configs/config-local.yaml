@@ -17,9 +17,9 @@ REDIS:
   PASS: test
   DB: 1
   TIMEOUT_DURATION: 500
-MYSQL:
-  DRIVER_NAME: "mysql"
-  DATA_SOURCE: "root:123445@tcp(localhost:3306)/Gymondo"
+POSTGRES:
+  DRIVER_NAME: "postgres"
+  DATA_SOURCE: "postgres://root:123456@tcp(localhost:5432)/gymondo"
   TBLES:
     {
       PRODUCTS: "products",

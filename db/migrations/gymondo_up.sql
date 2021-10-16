@@ -1,0 +1,72 @@
+CREATE TABLE "users" (
+  "id" SERIAL UNIQUE PRIMARY KEY NOT NULL,
+  "user_name" varchar UNIQUE,
+  "email" varchar UNIQUE NOT NULL,
+  "full_name" varchar,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp DEFAULT (now()),
+  "active_voucher" int
+);
+
+CREATE TABLE "products" (
+  "id" int PRIMARY KEY,
+  "name" varchar,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp DEFAULT (now())
+);
+
+CREATE TABLE "plans" (
+  "id" int PRIMARY KEY,
+  "name" varchar,
+  "price" int,
+  "discount" int,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp DEFAULT (now()),
+  "product_id" int,
+  "duration" int
+);
+
+CREATE TABLE "user_plans" (
+  "id" int PRIMARY KEY,
+  "user_id" int,
+  "plan_id" int,
+  "plan_status" varchar,
+  "start_date" timestamp DEFAULT (now()),
+  "end_date" timestamp DEFAULT (now()),
+  "voucher" int,
+  "tax" int
+);
+
+CREATE TABLE "vouchers" (
+  "id" int PRIMARY KEY,
+  "name" varchar,
+  "discount" int,
+  "discount_type" varchar,
+  "valid" boolean,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp DEFAULT (now()),
+  "start" datetime,
+  "end" datetime
+);
+
+CREATE TABLE "voucher_plan" (
+  "id" int PRIMARY KEY,
+  "voucher_id" int,
+  "plan_id" int,
+  "created_at" timestamp DEFAULT (now()),
+  "updated_at" timestamp DEFAULT (now())
+);
+
+ALTER TABLE "users" ADD FOREIGN KEY ("active_voucher") REFERENCES "vouchers" ("id");
+
+ALTER TABLE "plans" ADD FOREIGN KEY ("product_id") REFERENCES "products" ("id");
+
+ALTER TABLE "user_plans" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "user_plans" ADD FOREIGN KEY ("plan_id") REFERENCES "plans" ("id");
+
+ALTER TABLE "user_plans" ADD FOREIGN KEY ("voucher") REFERENCES "vouchers" ("id");
+
+ALTER TABLE "voucher_plan" ADD FOREIGN KEY ("voucher_id") REFERENCES "vouchers" ("id");
+
+ALTER TABLE "voucher_plan" ADD FOREIGN KEY ("plan_id") REFERENCES "plans" ("id");
