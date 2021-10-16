@@ -9,6 +9,7 @@ import (
 type Service interface {
 	UserGenerator(count int)
 	ProductGenerator(count int)
+	GetProductsList() ([]Product, error)
 }
 
 type service struct {

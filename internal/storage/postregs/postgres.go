@@ -48,3 +48,9 @@ func (r *Repository) GetUserByEmail(email string) (u subscription.User, err erro
 	}
 	return u, nil
 }
+
+func (r *Repository) GetProducts() ([]subscription.Product, error){
+	var products []subscription.Product
+	result := r.database.Find(&products)
+	return products, result.Error
+}

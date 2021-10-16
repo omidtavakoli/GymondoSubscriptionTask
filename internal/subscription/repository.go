@@ -11,4 +11,5 @@ type PgSQLRepository interface {
 	CreateUser(email, username, fullname string) error
 	CreateProduct(name string) error
 	GetUserByEmail(email string) (User, error)
+	GetProducts() ([]Product, error)
 }
