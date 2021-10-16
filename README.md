@@ -9,4 +9,5 @@
 - [ ] Pressure test
 - [ ] Add migrations
 - [ ] Add metrics
+- [ ] Api documentation
 - [ ] Distribute

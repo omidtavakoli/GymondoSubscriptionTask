@@ -7,7 +7,8 @@ import (
 )
 
 type Service interface {
-	//Update(ctx context.Context, queueName string)
+	UserGenerator(count int)
+	ProductGenerator(count int)
 }
 
 type service struct {

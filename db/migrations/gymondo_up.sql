@@ -9,14 +9,14 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "products" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL UNIQUE PRIMARY KEY NOT NULL,
   "name" varchar,
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp DEFAULT (now())
 );
 
 CREATE TABLE "plans" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL UNIQUE PRIMARY KEY NOT NULL,
   "name" varchar,
   "price" int,
   "discount" int,
@@ -27,7 +27,7 @@ CREATE TABLE "plans" (
 );
 
 CREATE TABLE "user_plans" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL UNIQUE PRIMARY KEY NOT NULL,
   "user_id" int,
   "plan_id" int,
   "plan_status" varchar,
@@ -38,7 +38,7 @@ CREATE TABLE "user_plans" (
 );
 
 CREATE TABLE "vouchers" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL UNIQUE PRIMARY KEY NOT NULL,
   "name" varchar,
   "discount" int,
   "discount_type" varchar,
@@ -50,7 +50,7 @@ CREATE TABLE "vouchers" (
 );
 
 CREATE TABLE "voucher_plan" (
-  "id" int PRIMARY KEY,
+  "id" SERIAL UNIQUE PRIMARY KEY NOT NULL,
   "voucher_id" int,
   "plan_id" int,
   "created_at" timestamp DEFAULT (now()),

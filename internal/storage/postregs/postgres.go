@@ -1,6 +1,7 @@
 package postregs
 
 import (
+	"Gymondo/internal/subscription"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
@@ -13,30 +14,37 @@ func CreateRepository(db *gorm.DB) (*Repository, error) {
 	repo := &Repository{
 		database: db,
 	}
-
-	//rawDB, err := db.DB()
-	//if err != nil {
-	//	return repo, err
-	//}
-
-	// Enable UUID Extensions
-	//_, err = rawDB.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public`)
-	//if err != nil {
-	//	return repo, err
-	//}
-
-	//err = db.AutoMigrate(models...)
-	//if err != nil {
-	//	return repo,err
-	//}
 	return repo, nil
 }
 
-func (m *Repository) GetUser(email string) error {
-	var u user
-	err := m.database.Where("email = ?", email).First(&u).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
+func (r *Repository) CreateUser(email, username, fullname string) error {
+	mu := subscription.User{
+		Email:    email,
+		UserName: username,
+		FullName: fullname,
+	}
+	err := r.database.Create(&mu).Error
+	if err != nil {
+		return errors.Wrap(err, "failed to create a user")
 	}
 	return nil
+}
+
+func (r *Repository) CreateProduct(name string) error {
+	mu := subscription.Product{
+		Name: name,
+	}
+	err := r.database.Create(&mu).Error
+	if err != nil {
+		return errors.Wrap(err, "failed to create a product")
+	}
+	return nil
+}
+
+func (r *Repository) GetUserByEmail(email string) (u subscription.User, err error) {
+	err = r.database.Where("email = ?", email).First(&u).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return u, err
+	}
+	return u, nil
 }
