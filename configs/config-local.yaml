@@ -5,7 +5,7 @@ SERVER:
   AUTH_ENABLED: false
   INGEST_NODE: false
   TEST_THIRD_PARTY: false
-  PORTS: 8080
+  PORT: 8090
 LOGGER:
   LOGLEVEL: TRACE
   GRAYLOG_ACTIVE: false
@@ -13,14 +13,15 @@ LOGGER:
   GRAYLOG_STREAM: "test"
   DISABLE_STDOUT: false
 REDIS:
-  HOST: "localhost:6379"
+  HOST: "localhost:6378"
   PASS: test
   DB: 1
   TIMEOUT_DURATION: 500
 POSTGRES:
-  DRIVER_NAME: "postgres"
-  DATA_SOURCE: "postgres://root:123456@tcp(localhost:5432)/gymondo"
-  TBLES:
-    {
-      PRODUCTS: "products",
-    }
+  HOST: localhost
+  PORT: 5432
+  NAME: gymondo
+  USER: test
+  PASSWORD: 123456
+  SSLMODE: disable
+  DEBUG: true

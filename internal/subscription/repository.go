@@ -1,9 +1,5 @@
 package subscription
 
-import (
-	"context"
-)
-
 type RedisRepository interface {
 	IsReady() bool
 }
@@ -11,6 +7,6 @@ type RedisRepository interface {
 type ExternalDriver interface {
 }
 
-type MySQLRepository interface {
-	GetProducts(ctx context.Context, limit int) error
+type PgSQLRepository interface {
+	GetUser(email string) error
 }

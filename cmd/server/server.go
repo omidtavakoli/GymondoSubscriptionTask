@@ -4,10 +4,10 @@ import (
 	"Gymondo/internal/http/rest"
 	"Gymondo/internal/logger"
 	"Gymondo/internal/metrics"
-	"Gymondo/internal/storage/mysql"
+	"Gymondo/internal/storage/postregs"
 	"Gymondo/internal/storage/redis"
 	"Gymondo/internal/subscription"
-	msql "Gymondo/platform/mysql"
+	pg "Gymondo/platform/postgres"
 	rds "Gymondo/platform/redis"
 	"context"
 	"github.com/go-playground/validator/v10"
@@ -43,17 +43,19 @@ func (s *Server) Initialize(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	pgConn := pg.CreateConnection(s.Config.Postgres, "gymondo.com")
 
-	mysqlConn, err := msql.NewConnection(ctx, &s.Config.MySQL)
-	if err != nil {
-		return err
-	}
-	mysqlRep, err := mysql.CreateRepository(mysqlConn)
+	gorm, err := pgConn.OpenGORM()
 	if err != nil {
 		return err
 	}
 
-	service := subscription.CreateService(&s.Config.Service, s.Logger, mysqlRep, redisRep, prometheus, v)
+	pgRep, err := postregs.CreateRepository(gorm)
+	if err != nil {
+		return err
+	}
+
+	service := subscription.CreateService(&s.Config.Service, s.Logger, pgRep, redisRep, prometheus, v)
 
 	handler := rest.CreateHandler(service)
 
@@ -74,7 +76,7 @@ func (s *Server) Start(ctx context.Context) {
 	//logrus.Info(prometheus)
 
 	// Start REST Server in Blocking mode
-	s.RESTHandler.Start(ctx, s.Config.Server.Ports["v1"], router)
+	s.RESTHandler.Start(ctx, s.Config.Server.Port, router)
 }
 
 // GracefulShutdown listen over the quitSignal to graceful shutdown the app
