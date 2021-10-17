@@ -23,3 +23,19 @@ func (s service) ProductGenerator(count int) {
 		}
 	}
 }
+
+func (s service) PlanGenerator() {
+	products, err := s.GetProductsList()
+	if err != nil {
+		s.logger.Errorf("err fetching products:%s", err)
+	} else {
+		for i, product := range products {
+			plan, cpErr := s.psql.CreatePlan("LifeTime", i*1000, 10, -1, product)
+			if cpErr != nil {
+				s.logger.Errorf("err creating product:%s", cpErr)
+			} else {
+				s.logger.Infof("PlanId:%d created", plan)
+			}
+		}
+	}
+}
