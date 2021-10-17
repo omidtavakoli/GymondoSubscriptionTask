@@ -82,21 +82,21 @@ func (r *Repository) CreatePlan(name string, price, discount, durationDays int, 
 	return plan.ID, nil
 }
 
-//todo: change plan_id to productid
 func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserPlan, error) {
 	userId, err := strconv.Atoi(bpr.UserId)
 	if err != nil {
 		return subscription.UserPlan{}, err
 	}
 
-	productId, err := strconv.Atoi(bpr.ProductId)
-	if err != nil {
-		return subscription.UserPlan{}, err
+	var plan subscription.Plan
+	pErr := r.database.Joins("inner join products p on plans.product_id = p.id").Where("product_id=? AND plans.name='LifeTime'", bpr.ProductId).Find(&plan).Error
+	if pErr != nil {
+		return subscription.UserPlan{}, pErr
 	}
-
+	//SELECT plans.id FROM "plans" inner join products p on plans.product_id = p.id WHERE product_id='22' AND plans.name='LifeTime' AND plans."deleted_at" IS NULL
 	UserPlan := subscription.UserPlan{
 		UserId:     userId,
-		PlanId:     productId,
+		PlanId:     int(plan.ID),
 		PlanStatus: "active",
 		//Voucher:  0,
 		StartDate: time.Now(),
@@ -104,7 +104,7 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 		DeletedAt: gorm.DeletedAt{},
 	}
 
-	resp := r.database.FirstOrCreate(&UserPlan, subscription.UserPlan{UserId: userId, PlanId: productId})
+	resp := r.database.FirstOrCreate(&UserPlan, subscription.UserPlan{UserId: userId, PlanId: int(plan.ID)})
 	if resp.Error != nil {
 		return UserPlan, resp.Error
 	}
