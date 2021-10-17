@@ -89,7 +89,7 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	}
 
 	var plan subscription.Plan
-	pErr := r.database.Joins("inner join products p on plans.product_id = p.id").Where("product_id=? AND plans.name='LifeTime'", bpr.ProductId).Find(&plan).Error
+	pErr := r.database.Joins("inner join products p on plans.product_id = p.id").Where("product_id=? AND plans.duration=-1", bpr.ProductId).Find(&plan).Error
 	if pErr != nil {
 		return subscription.UserPlan{}, pErr
 	}
