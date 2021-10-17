@@ -83,6 +83,7 @@ func (r *Repository) CreatePlan(name string, price, discount, durationDays int, 
 }
 
 func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserPlan, error) {
+	//todo: separate this func logics
 	userId, err := strconv.Atoi(bpr.UserId)
 	if err != nil {
 		return subscription.UserPlan{}, err
@@ -94,11 +95,15 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 		return subscription.UserPlan{}, pErr
 	}
 	//SELECT plans.id FROM "plans" inner join products p on plans.product_id = p.id WHERE product_id='22' AND plans.name='LifeTime' AND plans."deleted_at" IS NULL
+
+	tax := taxCalculator(userId)
+
 	UserPlan := subscription.UserPlan{
 		UserId:     userId,
 		PlanId:     int(plan.ID),
 		PlanStatus: "active",
 		//Voucher:  0,
+		Tax: tax,
 		StartDate: time.Now(),
 		EndDate:   time.Now().Add(1000000 * time.Hour), // large number
 		DeletedAt: gorm.DeletedAt{},
@@ -108,6 +113,7 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	if resp.Error != nil {
 		return UserPlan, resp.Error
 	}
+
 	return UserPlan, nil
 }
 
@@ -117,4 +123,9 @@ func (r *Repository) FetchPlansByUserId(userId int) (plans []subscription.UserPl
 		return plans, err
 	}
 	return plans, nil
+}
+
+func taxCalculator(userId int) int{
+	//todo: calculate tax based on country
+	return 10
 }

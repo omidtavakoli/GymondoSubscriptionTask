@@ -60,6 +60,7 @@ type UserPlan struct {
 	PlanId     int
 	PlanStatus string `gorm:"default:active"`
 	//Voucher uint64    `gorm:"foreignKey:ID"`
+	Tax int
 	StartDate time.Time `gorm:"default:current_timestamp"`
 	EndDate   time.Time `gorm:"default:current_timestamp"`
 	DeletedAt gorm.DeletedAt
