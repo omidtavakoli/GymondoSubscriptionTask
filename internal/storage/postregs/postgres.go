@@ -82,6 +82,7 @@ func (r *Repository) CreatePlan(name string, price, discount, durationDays int, 
 	return plan.ID, nil
 }
 
+//todo: change plan_id to productid
 func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserPlan, error) {
 	userId, err := strconv.Atoi(bpr.UserId)
 	if err != nil {
@@ -108,4 +109,12 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 		return UserPlan, resp.Error
 	}
 	return UserPlan, nil
+}
+
+func (r *Repository) FetchPlansByUserId(userId int) (plans []subscription.UserPlan, err error){
+	err = r.database.Where("user_id = ?", userId).Find(&plans).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return plans, err
+	}
+	return plans, nil
 }

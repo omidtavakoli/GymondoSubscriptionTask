@@ -15,4 +15,5 @@ type PgSQLRepository interface {
 	GetProducts() ([]Product, error)
 	GetProduct(id int) (Product, error)
 	BuyProduct(bpr BuyRequest) (UserPlan, error)
+	FetchPlansByUserId(userId int) ([]UserPlan, error)
 }
