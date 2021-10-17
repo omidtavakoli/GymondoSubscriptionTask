@@ -35,6 +35,11 @@ type Product struct {
 	DeletedAt gorm.DeletedAt
 }
 
+type BuyRequest struct {
+	UserId    string `form:"userId" binding:"required"`
+	ProductId string `form:"productId" binding:"required"`
+}
+
 type Plan struct {
 	gorm.Model
 	ID        uint64 `gorm:"primary_key"`
@@ -48,11 +53,6 @@ type Plan struct {
 	DeletedAt gorm.DeletedAt
 }
 
-type BuyRequest struct {
-	UserId    string `form:"userId" binding:"required"`
-	ProductId string `form:"productId" binding:"required"`
-}
-
 type UserPlan struct {
 	gorm.Model
 	ID         uint64 `gorm:"primary_key"`
@@ -60,7 +60,7 @@ type UserPlan struct {
 	PlanId     int
 	PlanStatus string `gorm:"default:active"`
 	//Voucher uint64    `gorm:"foreignKey:ID"`
-	Tax int
+	Tax       int
 	StartDate time.Time `gorm:"default:current_timestamp"`
 	EndDate   time.Time `gorm:"default:current_timestamp"`
 	DeletedAt gorm.DeletedAt
@@ -68,4 +68,19 @@ type UserPlan struct {
 
 type Voucher struct {
 	gorm.Model
+}
+
+type Status struct {
+	Id         int    `json:"id"`
+	Name       string `json:"plan_name"`
+	Price      int    `json:"price"`
+	Discount   int    `json:"discount"`
+	ProductId  int    `json:"product_id"`
+	Duration   int    `json:"duration"`
+	UserId     int    `json:"user_id"`
+	PlanId     int    `json:"plan_id"`
+	PlanStatus string `json:"plan_status"`
+	StartDate  string `json:"start_date"`
+	EndDate    string `json:"end_date"`
+	Tax        int
 }

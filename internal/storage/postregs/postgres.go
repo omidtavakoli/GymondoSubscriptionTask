@@ -2,6 +2,7 @@ package postregs
 
 import (
 	"Gymondo/internal/subscription"
+	"fmt"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"strconv"
@@ -103,7 +104,7 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 		PlanId:     int(plan.ID),
 		PlanStatus: "active",
 		//Voucher:  0,
-		Tax: tax,
+		Tax:       tax,
 		StartDate: time.Now(),
 		EndDate:   time.Now().Add(1000000 * time.Hour), // large number
 		DeletedAt: gorm.DeletedAt{},
@@ -117,15 +118,12 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	return UserPlan, nil
 }
 
-func (r *Repository) FetchPlansByUserId(userId int) (plans []subscription.UserPlan, err error){
-	err = r.database.Where("user_id = ?", userId).Find(&plans).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return plans, err
-	}
-	return plans, nil
+func (r *Repository) FetchPlansByUserId(userId int) (status []subscription.Status, err error) {
+	return status, r.database.Raw(fmt.Sprintf("SELECT *  FROM plans inner join user_plans p on p.plan_id = plans.id WHERE p.user_id=%d", userId)).Scan(&status).Error
+	//return status, nil
 }
 
-func taxCalculator(userId int) int{
+func taxCalculator(userId int) int {
 	//todo: calculate tax based on country
 	return 10
 }
