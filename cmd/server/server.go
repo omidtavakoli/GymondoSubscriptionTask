@@ -59,8 +59,9 @@ func (s *Server) Initialize(ctx context.Context) error {
 
 	handler := rest.CreateHandler(service)
 
-	//go service.UserGenerator(10)
-	//go service.ProductGenerator(10)
+	//service.UserGenerator(10)
+	//service.ProductGenerator(10)
+	//service.PlanGenerator()
 
 	s.Prometheus = prometheus
 	s.RESTHandler = handler

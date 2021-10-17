@@ -9,7 +9,10 @@ import (
 type Service interface {
 	UserGenerator(count int)
 	ProductGenerator(count int)
+	PlanGenerator()
 	GetProductsList() ([]Product, error)
+	GetProductById(id int) (Product, error)
+	BuyProduct(bpr BuyRequest) (UserPlan, error)
 }
 
 type service struct {

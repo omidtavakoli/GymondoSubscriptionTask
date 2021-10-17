@@ -10,4 +10,5 @@
 - [ ] Add migrations
 - [ ] Add metrics
 - [ ] Api documentation
+- [ ] Add cache
 - [ ] Distribute

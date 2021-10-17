@@ -4,6 +4,8 @@ import (
 	"Gymondo/internal/subscription"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"strconv"
+	"time"
 )
 
 type Repository struct {
@@ -49,8 +51,61 @@ func (r *Repository) GetUserByEmail(email string) (u subscription.User, err erro
 	return u, nil
 }
 
-func (r *Repository) GetProducts() ([]subscription.Product, error){
+func (r *Repository) GetProducts() ([]subscription.Product, error) {
 	var products []subscription.Product
 	result := r.database.Find(&products)
 	return products, result.Error
+}
+
+func (r *Repository) GetProduct(id int) (product subscription.Product, err error) {
+	err = r.database.Where("id = ?", id).First(&product).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return product, err
+	}
+	return product, nil
+}
+
+func (r *Repository) CreatePlan(name string, price, discount, durationDays int, product subscription.Product) (uint64, error) {
+	plan := subscription.Plan{
+		Name:      name,
+		Price:     price,
+		Discount:  discount,
+		Duration:  durationDays,
+		ProductID: product.ID,
+		CreatedAt: time.Time{},
+		UpdatedAt: time.Time{},
+	}
+	err := r.database.Create(&plan).Error
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to create a plan")
+	}
+	return plan.ID, nil
+}
+
+func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserPlan, error) {
+	userId, err := strconv.Atoi(bpr.UserId)
+	if err != nil {
+		return subscription.UserPlan{}, err
+	}
+
+	productId, err := strconv.Atoi(bpr.ProductId)
+	if err != nil {
+		return subscription.UserPlan{}, err
+	}
+
+	UserPlan := subscription.UserPlan{
+		UserId:     userId,
+		PlanId:     productId,
+		PlanStatus: "active",
+		//Voucher:  0,
+		StartDate: time.Now(),
+		EndDate:   time.Now().Add(1000000 * time.Hour), // large number
+		DeletedAt: gorm.DeletedAt{},
+	}
+
+	resp := r.database.FirstOrCreate(&UserPlan, subscription.UserPlan{UserId: userId, PlanId: productId})
+	if resp.Error != nil {
+		return UserPlan, resp.Error
+	}
+	return UserPlan, nil
 }
