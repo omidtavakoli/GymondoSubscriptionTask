@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "e7676be4-e784-4e0a-b840-f0b6cb8d8564",
+		"name": "Gymondo",
+		"description": "Gymondo Subscription service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8190/v1/products",
+					"host": [
+						"localhost"
+					],
+					"port": "8190",
+					"path": [
+						"v1",
+						"products"
+					]
+				},
+				"description": "I can fetch a list of products"
+			},
+			"response": []
+		},
+		{
+			"name": "product by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8190/v1/product/3",
+					"host": [
+						"localhost"
+					],
+					"port": "8190",
+					"path": [
+						"v1",
+						"product",
+						"3"
+					]
+				},
+				"description": "I can fetch a single product"
+			},
+			"response": []
+		},
+		{
+			"name": "buy product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8190/v1/buy_product?userId=7&productId=3",
+					"host": [
+						"localhost"
+					],
+					"port": "8190",
+					"path": [
+						"v1",
+						"buy_product"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "7"
+						},
+						{
+							"key": "productId",
+							"value": "3"
+						}
+					]
+				},
+				"description": "I can buy a single product using this api. In fact it makes a lifetime plan based on this product for selected user"
+			},
+			"response": []
+		},
+		{
+			"name": "fetch userid plans",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8190/v1/my_plan/7",
+					"host": [
+						"localhost"
+					],
+					"port": "8190",
+					"path": [
+						"v1",
+						"my_plan",
+						"7"
+					]
+				},
+				"description": "I want to fetch the following informations related to my subscription (e.g. start date, end date, duration of the subscription, prices, tax)"
+			},
+			"response": []
+		},
+		{
+			"name": "change plan status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8190/v1/change_plan_status?userId=7&planId=9&status=cancel",
+					"host": [
+						"localhost"
+					],
+					"port": "8190",
+					"path": [
+						"v1",
+						"change_plan_status"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "7"
+						},
+						{
+							"key": "planId",
+							"value": "9"
+						},
+						{
+							"key": "status",
+							"value": "cancel"
+						}
+					]
+				},
+				"description": "I can pause and unpause or cancel my subscription\n\nSend active, pause and cancel statuses please"
+			},
+			"response": []
+		}
+	]
+}
