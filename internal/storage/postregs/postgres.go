@@ -102,7 +102,7 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	UserPlan := subscription.UserPlan{
 		UserId:     userId,
 		PlanId:     int(plan.ID),
-		PlanStatus: "active",
+		PlanStatus: "pause",
 		//Voucher:  0,
 		Tax:       tax,
 		StartDate: time.Now(),
