@@ -1,8 +1,8 @@
 * Project Plan
 - [X] Design Database schema
-- [ ] Add Hexagonal Architecture base plate
-- [ ] Add mock data
-- [ ] Design endpoints
+- [X] Add Hexagonal Architecture baseplate
+- [X] Add mock data
+- [X] Design endpoints
 - [ ] Test
 - [ ] Dockerize
 - [ ] Deploy
