@@ -40,6 +40,12 @@ type BuyRequest struct {
 	ProductId string `form:"productId" binding:"required"`
 }
 
+type ChangeStatus struct {
+	UserId string `form:"userId" binding:"required"`
+	PlanId string `form:"planId" binding:"required"`
+	Status string `form:"status" binding:"oneof=active pause cancel"`
+}
+
 type Plan struct {
 	gorm.Model
 	ID        uint64 `gorm:"primary_key"`

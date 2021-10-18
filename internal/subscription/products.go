@@ -23,11 +23,3 @@ func (s service) BuyProduct(bpr BuyRequest) (UserPlan, error) {
 	}
 	return plan, nil
 }
-
-func (s service) FetchPlansByUserId(userId int) ([]Status, error) {
-	plans, err := s.psql.FetchPlansByUserId(userId)
-	if err != nil {
-		return plans, err
-	}
-	return plans, nil
-}

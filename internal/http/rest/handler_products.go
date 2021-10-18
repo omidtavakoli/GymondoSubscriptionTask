@@ -62,3 +62,20 @@ func (h *Handler) FetchPlansByUserId(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, plan)
 }
+
+func (h *Handler) ChangePlanStatus(c *gin.Context) {
+	var changeStatus subscription.ChangeStatus
+	if err := c.ShouldBind(&changeStatus); err != nil {
+		if vErr, ok := err.(validator.ValidationErrors); ok {
+			c.JSON(http.StatusBadRequest, GetFailResponseFromValidationErrors(vErr))
+		}
+		return
+	}
+	//todo: make better response body
+	bpErr := h.SubscriptionService.ChangeUserPlanStatus(changeStatus)
+	if bpErr != nil {
+		c.JSON(http.StatusNotFound, "done")
+		return
+	}
+	c.JSON(http.StatusOK, "done")
+}

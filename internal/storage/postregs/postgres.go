@@ -120,7 +120,10 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 
 func (r *Repository) FetchPlansByUserId(userId int) (status []subscription.Status, err error) {
 	return status, r.database.Raw(fmt.Sprintf("SELECT *  FROM plans inner join user_plans p on p.plan_id = plans.id WHERE p.user_id=%d", userId)).Scan(&status).Error
-	//return status, nil
+}
+
+func (r *Repository) ChangeUserPlanStatus(status subscription.ChangeStatus) error {
+	return r.database.Model(&subscription.UserPlan{}).Where("user_id=? AND plan_id=?", status.UserId, status.PlanId).Update("plan_status", status.Status).Error
 }
 
 func taxCalculator(userId int) int {

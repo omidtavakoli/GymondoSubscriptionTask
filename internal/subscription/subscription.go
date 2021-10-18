@@ -14,6 +14,7 @@ type Service interface {
 	GetProductById(id int) (Product, error)
 	BuyProduct(bpr BuyRequest) (UserPlan, error)
 	FetchPlansByUserId(userId int) ([]Status, error)
+	ChangeUserPlanStatus(req ChangeStatus) error
 }
 
 type service struct {
