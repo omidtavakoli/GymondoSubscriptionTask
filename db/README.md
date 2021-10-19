@@ -7,7 +7,12 @@ https://github.com/golang-migrate/migrate/tree/master/cmd/migrate
 ```
 
 ## Local PostgreSQL
-Use docker-compose or 
+Use 
+```
+docker-compose up -d 
+```
+
+or 
 ```
 docker run \
   -d \
