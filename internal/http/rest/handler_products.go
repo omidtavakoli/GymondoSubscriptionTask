@@ -8,6 +8,14 @@ import (
 	"strconv"
 )
 
+func (h *Handler) DummyDataGenerator(c *gin.Context) {
+	h.SubscriptionService.UserGenerator(10)
+	h.SubscriptionService.ProductGenerator(10)
+	h.SubscriptionService.PlanGenerator()
+
+	c.JSON(http.StatusOK, "ok")
+}
+
 func (h *Handler) Products(c *gin.Context) {
 	res, err := h.SubscriptionService.GetProductsList()
 	if err != nil {

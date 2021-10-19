@@ -43,14 +43,13 @@ func (s *Server) Initialize(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	pgConn := pg.CreateConnection(s.Config.Postgres, "gymondo.com")
 
+	pgConn := pg.CreateConnection(s.Config.Postgres, "gymondo.com")
 	gorm, err := pgConn.OpenGORM()
 	if err != nil {
 		return err
 	}
-
-	pgRep, err := postregs.CreateRepository(gorm)
+	pgRep, err := postgres.CreateRepository(gorm)
 	if err != nil {
 		return err
 	}
@@ -58,10 +57,6 @@ func (s *Server) Initialize(ctx context.Context) error {
 	service := subscription.CreateService(&s.Config.Service, s.Logger, pgRep, redisRep, prometheus, v)
 
 	handler := rest.CreateHandler(service)
-
-	//service.UserGenerator(10)
-	//service.ProductGenerator(10)
-	//service.PlanGenerator()
 
 	s.Prometheus = prometheus
 	s.RESTHandler = handler

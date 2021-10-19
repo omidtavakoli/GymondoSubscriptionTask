@@ -7,6 +7,26 @@
 	},
 	"item": [
 		{
+			"name": "dummy data generator",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8190/v1/dummy",
+					"host": [
+						"localhost"
+					],
+					"port": "8190",
+					"path": [
+						"v1",
+						"dummy"
+					]
+				},
+				"description": "Make dummy data"
+			},
+			"response": []
+		},
+		{
 			"name": "products",
 			"request": {
 				"method": "GET",
@@ -104,7 +124,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8190/v1/change_plan_status?userId=7&planId=9&status=cancel",
+					"raw": "localhost:8190/v1/change_plan_status?userId=1&planId=1&status=cancel",
 					"host": [
 						"localhost"
 					],
@@ -116,11 +136,11 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "7"
+							"value": "1"
 						},
 						{
 							"key": "planId",
-							"value": "9"
+							"value": "1"
 						},
 						{
 							"key": "status",
