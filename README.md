@@ -14,8 +14,8 @@ You can file postman api document in /docs
 - [ ] Dockerize
 - [ ] Deploy
 - [ ] Pressure test
-- [ ] Add migrations
+- [X] Add migrations
 - [ ] Add metrics
-- [ ] Api documentation
+- [X] Api documentation
 - [ ] Add cache
 - [ ] Distribute
