@@ -7,9 +7,11 @@ func (s service) UserGenerator(count int) {
 		email := gofakeit.Email()
 		username := gofakeit.BeerName()
 		fullName := gofakeit.Name()
-		err := s.psql.CreateUser(email, username, fullName)
+		cu, err := s.psql.CreateUser(email, username, fullName)
 		if err != nil {
 			s.logger.Errorf("err creating user:%s", err)
+		} else {
+			s.logger.Infof("User:%s created", cu.UserName)
 		}
 	}
 }
