@@ -1,14 +1,10 @@
 # README
 
 ## Requirements
+```
 
-[Buffalo CLI Tool](https://gobuffalo.io/)
-
-[comment]: <> (```)
-
-[comment]: <> (go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.14.1)
-
-[comment]: <> (```)
+https://github.com/golang-migrate/migrate/tree/master/cmd/migrate
+```
 
 ## Local PostgreSQL
 Use docker-compose or 
@@ -16,9 +12,9 @@ Use docker-compose or
 docker run \
   -d \
   -e POSTGRES_HOST_AUTH_METHOD=trust \
-  -e POSTGRES_USER=user \
-  -e POSTGRES_PASSWORD=password \
-  -e POSTGRES_DB=dbname \
+  -e POSTGRES_USER=test \
+  -e POSTGRES_PASSWORD=123456 \
+  -e POSTGRES_DB=gymondo \
   -p 5432:5432 \
   postgres:12.5-alpine
 ```
@@ -28,7 +24,7 @@ docker run \
 Run:
 
 ```
-migrate -path db/migrations/ -database postgres://user:password@localhost:5432/dbname?sslmode=disable up
+migrate -path db/migration -database "postgresql://test:123456@localhost:5432/gymondo?sslmode=disable" up
 ```
 
 Create:

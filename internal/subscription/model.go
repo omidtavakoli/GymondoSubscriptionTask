@@ -76,6 +76,10 @@ type Voucher struct {
 	gorm.Model
 }
 
+type VoucherPlan struct {
+	gorm.Model
+}
+
 type Status struct {
 	Id         int    `json:"id"`
 	Name       string `json:"plan_name"`

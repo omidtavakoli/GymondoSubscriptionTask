@@ -1,9 +1,10 @@
-package postregs
+package postgres
 
 import (
 	"Gymondo/internal/subscription"
 	"fmt"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"strconv"
 	"time"
@@ -13,14 +14,29 @@ type Repository struct {
 	database *gorm.DB
 }
 
+var models = []interface{}{
+	&subscription.User{},
+	&subscription.UserPlan{},
+	&subscription.Plan{},
+	&subscription.Product{},
+	&subscription.Voucher{},
+	&subscription.VoucherPlan{},
+}
+
 func CreateRepository(db *gorm.DB) (*Repository, error) {
 	repo := &Repository{
 		database: db,
 	}
+	logrus.Infof("current db name: %s", db.Migrator().CurrentDatabase())
+	err := db.AutoMigrate(models...)
+	if err != nil {
+		return repo, errors.Wrap(err, "failed to auto migrate models")
+	}
 	return repo, nil
 }
 
-func (r *Repository) CreateUser(email, username, fullname string) error {
+//todo: receive user model instead of raw data
+func (r *Repository) CreateUser(email, username, fullname string) (subscription.User, error) {
 	mu := subscription.User{
 		Email:    email,
 		UserName: username,
@@ -28,9 +44,9 @@ func (r *Repository) CreateUser(email, username, fullname string) error {
 	}
 	err := r.database.Create(&mu).Error
 	if err != nil {
-		return errors.Wrap(err, "failed to create a user")
+		return mu, errors.Wrap(err, "failed to create a user")
 	}
-	return nil
+	return mu, nil
 }
 
 func (r *Repository) CreateProduct(name string) error {
