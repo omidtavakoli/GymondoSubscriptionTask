@@ -7,9 +7,7 @@ import (
 )
 
 type Service interface {
-	UserGenerator(count int)
-	ProductGenerator(count int)
-	PlanGenerator()
+	DummyDataGenerator() error
 	GetProductsList() ([]Product, error)
 	GetProductById(id int) (Product, error)
 	BuyProduct(bpr BuyRequest) (UserPlan, error)

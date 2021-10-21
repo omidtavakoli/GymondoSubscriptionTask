@@ -74,10 +74,26 @@ type UserPlan struct {
 
 type Voucher struct {
 	gorm.Model
+	ID           uint64 `gorm:"primary_key"`
+	Name         string
+	Discount     int
+	DiscountType string
+	valid        bool
+	CreatedAt    time.Time `gorm:"default:current_timestamp"`
+	UpdatedAt    time.Time `gorm:"default:current_timestamp"`
+	DeletedAt    gorm.DeletedAt
+	StartDate    time.Time `gorm:"default:current_timestamp"`
+	EndDate      time.Time `gorm:"default:current_timestamp"`
 }
 
 type VoucherPlan struct {
 	gorm.Model
+	ID        uint64    `gorm:"primary_key"`
+	VoucherID uint64    `gorm:"foreignKey:ID"`
+	PlanID    uint64    `gorm:"foreignKey:ID"`
+	CreatedAt time.Time `gorm:"default:current_timestamp"`
+	UpdatedAt time.Time `gorm:"default:current_timestamp"`
+	DeletedAt gorm.DeletedAt
 }
 
 type Status struct {
@@ -93,4 +109,13 @@ type Status struct {
 	StartDate  string `json:"start_date"`
 	EndDate    string `json:"end_date"`
 	Tax        int
+}
+
+type CreateVoucherRequest struct {
+	Name         string
+	PlanId       uint64
+	Discount     int
+	DiscountType string `form:"type" binding:"oneof=percent amount"`
+	StartDate    time.Time
+	EndDate      time.Time
 }

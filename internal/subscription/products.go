@@ -8,6 +8,14 @@ func (s service) GetProductsList() (products []Product, err error) {
 	return products, nil
 }
 
+func (s service) GetPlansList() (plans []Plan, err error) {
+	plans, err = s.psql.GetPlans()
+	if err != nil {
+		return plans, err
+	}
+	return plans, nil
+}
+
 func (s service) GetProductById(id int) (product Product, err error) {
 	product, err = s.psql.GetProduct(id)
 	if err != nil {

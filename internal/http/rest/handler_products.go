@@ -9,10 +9,11 @@ import (
 )
 
 func (h *Handler) DummyDataGenerator(c *gin.Context) {
-	h.SubscriptionService.UserGenerator(10)
-	h.SubscriptionService.ProductGenerator(10)
-	h.SubscriptionService.PlanGenerator()
-
+	err := h.SubscriptionService.DummyDataGenerator()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
 	c.JSON(http.StatusOK, "ok")
 }
 

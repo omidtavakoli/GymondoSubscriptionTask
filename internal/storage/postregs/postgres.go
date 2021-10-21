@@ -60,6 +60,24 @@ func (r *Repository) CreateProduct(name string) error {
 	return nil
 }
 
+func (r *Repository) CreateVoucher(cvr subscription.CreateVoucherRequest) (subscription.Voucher, error) {
+	sv := subscription.Voucher{
+		Name:         cvr.Name,
+		Discount:     cvr.Discount,
+		DiscountType: cvr.DiscountType,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+		DeletedAt:    gorm.DeletedAt{},
+		StartDate:    cvr.StartDate,
+		EndDate:      cvr.EndDate,
+	}
+	err := r.database.Create(&sv).Error
+	if err != nil {
+		return sv, errors.Wrap(err, "failed to create a voucher")
+	}
+	return sv, nil
+}
+
 func (r *Repository) GetUserByEmail(email string) (u subscription.User, err error) {
 	err = r.database.Where("email = ?", email).First(&u).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -72,6 +90,17 @@ func (r *Repository) GetProducts() ([]subscription.Product, error) {
 	var products []subscription.Product
 	result := r.database.Find(&products)
 	return products, result.Error
+}
+
+func (r *Repository) GetPlans() ([]subscription.Plan, error) {
+	var plans []subscription.Plan
+	result := r.database.Find(&plans)
+	return plans, result.Error
+}
+func (r *Repository) GetVouchers() ([]subscription.Voucher, error) {
+	var vouchers []subscription.Voucher
+	result := r.database.Find(&vouchers)
+	return vouchers, result.Error
 }
 
 func (r *Repository) GetProduct(id int) (product subscription.Product, err error) {
@@ -97,6 +126,21 @@ func (r *Repository) CreatePlan(name string, price, discount, durationDays int, 
 		return 0, errors.Wrap(err, "failed to create a plan")
 	}
 	return plan.ID, nil
+}
+
+func (r *Repository) CreateVoucherPlan(plan subscription.Plan, voucher subscription.Voucher) (uint64, error) {
+	voucherPlan := subscription.VoucherPlan{
+		VoucherID: voucher.ID,
+		PlanID:    plan.ID,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		DeletedAt: gorm.DeletedAt{},
+	}
+	err := r.database.Create(&voucherPlan).Error
+	if err != nil {
+		return 0, errors.Wrap(err, "failed to create a voucher plan")
+	}
+	return voucherPlan.ID, nil
 }
 
 func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserPlan, error) {

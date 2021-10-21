@@ -1,6 +1,6 @@
 # Gymondo Subscription Project
 
-This is a project for multi binary subscription project with hexagonal architecture
+This is a project for multi binary subscription project with hexagonal architecture and Repository Pattern
 
 Please for database migration refer to the documentation in [db](db/README.md).
 
