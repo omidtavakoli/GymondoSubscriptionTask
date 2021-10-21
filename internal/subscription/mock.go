@@ -11,7 +11,7 @@ func (s service) DummyDataGenerator() error {
 	s.productGenerator(5)
 	s.planGenerator()
 	s.voucherGenerator()
-	s.voucherPlanGenerator(5)
+	s.voucherPlanGenerator()
 	return nil
 }
 
@@ -115,7 +115,7 @@ func (s service) voucherGenerator() {
 	}
 }
 
-func (s service) voucherPlanGenerator(count int) {
+func (s service) voucherPlanGenerator() {
 	plans, err := s.psql.GetPlans()
 	if err != nil {
 		s.logger.Errorf("getting plans error : %s", err.Error())
@@ -128,11 +128,13 @@ func (s service) voucherPlanGenerator(count int) {
 	}
 	rand.Seed(time.Now().Unix())
 	//egt random list of numbers
-	plansKeys := rand.Perm(count)
-	vouchersKeys := rand.Perm(count)
+	plansKeys := rand.Perm(len(plans)+10)
+	vouchersKeys := rand.Perm(len(vouchers)+10)
 
-	for i := 0; i < count; i++ {
-		_, err := s.psql.CreateVoucherPlan(plans[plansKeys[0]], vouchers[vouchersKeys[i]])
+	for i := 0; i < len(plans)/5; i++ {
+		pk := plansKeys[i]
+		vk := vouchersKeys[i]
+		_, err := s.psql.CreateVoucherPlan(plans[pk], vouchers[vk])
 		if err != nil {
 			s.logger.Errorf("creating voucher plans error : %s", err.Error())
 			return
