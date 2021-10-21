@@ -3,34 +3,15 @@ package subscription
 import (
 	"github.com/brianvoe/gofakeit"
 	"math/rand"
-	"sync"
 	"time"
 )
 
 func (s service) DummyDataGenerator() error {
-	wg := sync.WaitGroup{}
-	wg.Add(5)
-	go func() {
-		defer wg.Done()
-		s.userGenerator(10)
-	}()
-	go func() {
-		defer wg.Done()
-		s.productGenerator(10)
-	}()
-	go func() {
-		defer wg.Done()
-		s.planGenerator()
-	}()
-	go func() {
-		defer wg.Done()
-		s.voucherGenerator()
-	}()
-	go func() {
-		defer wg.Done()
-		s.voucherPlanGenerator(5)
-	}()
-	wg.Wait()
+	s.userGenerator(5)
+	s.productGenerator(5)
+	s.planGenerator()
+	s.voucherGenerator()
+	s.voucherPlanGenerator(5)
 	return nil
 }
 
