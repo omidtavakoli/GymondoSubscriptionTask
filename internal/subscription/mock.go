@@ -81,20 +81,35 @@ func (s service) voucherGenerator() {
 	if err != nil {
 		s.logger.Errorf("err fetching products:%s", err)
 	} else {
-		duscountTypes := []string{"amount", "percent"}
+		discountTypes := []string{"amount", "percent"}
 		for i, plan := range plans {
 			name := gofakeit.BeerName()
 			cvr := CreateVoucherRequest{
 				Name:         name,
 				PlanId:       plan.ID,
 				Discount:     rand.Intn(30),
-				DiscountType: duscountTypes[i%2],
+				DiscountType: discountTypes[i%2],
 				StartDate:    time.Now(),
-				EndDate:      time.Now().Add(time.Duration(rand.Intn(200) * i)),
+				EndDate:      time.Now().Add(time.Hour * 168),
 			}
 			_, err := s.psql.CreateVoucher(cvr)
 			if err != nil {
 				s.logger.Errorf("err creating voucher:%s", err)
+			}
+
+			//	make invalid voucher
+			name2 := gofakeit.BeerName()
+			cvr2 := CreateVoucherRequest{
+				Name:         name2,
+				PlanId:       plan.ID,
+				Discount:     rand.Intn(30),
+				DiscountType: discountTypes[i%2],
+				StartDate:    time.Now().Add(-time.Hour * 100),
+				EndDate:      time.Now().Add(-time.Hour * 24),
+			}
+			_, err2 := s.psql.CreateVoucher(cvr2)
+			if err2 != nil {
+				s.logger.Errorf("err creating voucher:%s", err2)
 			}
 		}
 	}
