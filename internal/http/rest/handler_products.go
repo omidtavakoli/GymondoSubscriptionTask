@@ -20,7 +20,7 @@ func (h *Handler) DummyDataGenerator(c *gin.Context) {
 func (h *Handler) Products(c *gin.Context) {
 	res, err := h.SubscriptionService.GetProductsList()
 	if err != nil {
-		c.JSON(http.StatusNotFound, res)
+		c.JSON(http.StatusNotFound, GetFailResponse(err.Error(), nil))
 		return
 	}
 	c.JSON(http.StatusOK, res)
@@ -51,7 +51,7 @@ func (h *Handler) BuyProduct(c *gin.Context) {
 	}
 	plan, bpErr := h.SubscriptionService.BuyProduct(buyRequest)
 	if bpErr != nil {
-		c.JSON(http.StatusNotFound, plan)
+		c.JSON(http.StatusNotFound, GetFailResponse(bpErr.Error(), nil))
 		return
 	}
 	c.JSON(http.StatusOK, plan)
