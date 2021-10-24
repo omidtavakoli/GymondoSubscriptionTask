@@ -12,6 +12,7 @@ type Service interface {
 	GetProductById(id int) (Product, error)
 	BuyProduct(bpr BuyRequest) (UserPlan, error)
 	FetchPlansByUserId(userId int) ([]Status, error)
+	ProductByVoucher(voucherId int) ([]VoucherPlanProduct, error)
 	ChangeUserPlanStatus(req ChangeStatus) error
 }
 

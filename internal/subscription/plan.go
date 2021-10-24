@@ -11,3 +11,11 @@ func (s service) FetchPlansByUserId(userId int) ([]Status, error) {
 	}
 	return plans, nil
 }
+
+func (s service) ProductByVoucher(voucherId int) ([]VoucherPlanProduct, error) {
+	vpp, err := s.psql.FetchProductsByVoucherId(voucherId)
+	if err != nil {
+		return vpp, err
+	}
+	return vpp, nil
+}

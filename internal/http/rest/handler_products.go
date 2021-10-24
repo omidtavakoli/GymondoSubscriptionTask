@@ -57,6 +57,21 @@ func (h *Handler) BuyProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, plan)
 }
 
+func (h *Handler) ProductByVoucher(c *gin.Context) {
+	id := c.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusExpectationFailed, nil)
+		return
+	}
+	plan, bpErr := h.SubscriptionService.ProductByVoucher(idInt)
+	if bpErr != nil {
+		c.JSON(http.StatusNotFound, GetFailResponse(bpErr.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, plan)
+}
+
 func (h *Handler) FetchPlansByUserId(c *gin.Context) {
 	id := c.Param("user_id")
 	userId, err := strconv.Atoi(id)
