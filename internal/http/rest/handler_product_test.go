@@ -99,17 +99,7 @@ func TestHandler_BuyProduct(t *testing.T) {
 		initService        func() subscription.Service
 	}{
 		{
-			description:        "200 ok",
-			expectedStatusCode: http.StatusOK,
-			expectedData:       subscription.UserPlan{},
-			initService: func() subscription.Service {
-				mockRep := new(MockSubscriptionService)
-				mockRep.On("BuyProduct", mock.Anything).Return(subscription.UserPlan{}, nil)
-				return mockRep
-			},
-		},
-		{
-			description:        "400 must have parameter",
+			description:        "400 request without params",
 			expectedStatusCode: http.StatusBadRequest,
 			expectedData:       subscription.UserPlan{},
 			initService: func() subscription.Service {

@@ -39,3 +39,12 @@ func (m *MockSubscriptionService) ChangeUserPlanStatus(req subscription.ChangeSt
 	args := m.Called(req)
 	return args.Error(1)
 }
+
+func (m *MockSubscriptionService) ProductByVoucher(voucherId int) ([]subscription.VoucherPlanProduct, error) {
+	args := m.Called(voucherId)
+	return args.Get(0).([]subscription.VoucherPlanProduct), args.Error(1)
+}
+
+func (m *MockSubscriptionService) DummyDataGenerator() error {
+	return nil
+}

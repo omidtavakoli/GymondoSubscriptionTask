@@ -167,7 +167,7 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	//validate voucher
 	vErr := r.database.First(&voucher, bpr.VoucherId).Error
 	if vErr != nil {
-		return subscription.UserPlan{}, errors.Wrap(vErr, "voucher not found")
+		logrus.Warn("voucher not found")
 	} else {
 		if time.Now().Before(voucher.StartDate) || voucher.EndDate.Before(time.Now()) {
 			return subscription.UserPlan{}, errors.New("voucher is not valid")
@@ -211,12 +211,9 @@ func (r *Repository) FetchPlansByUserId(userId int) (status []subscription.Statu
 	up.plan_status as plan_status,
 	up.start_date as plan_start_date, 
 	up.end_date as plan_end_date, 
-	up.tax as plan_tax, 
-	v.discount as voucher_discount, 
-	v.discount_type as voucher_discount_type 
+	up.tax as plan_tax
 	FROM plans as pl 
 	inner join user_plans up on up.plan_id = pl.id 
-	inner join vouchers v on v.id = up.voucher 
 	WHERE up.user_id=%d`, userId)).Scan(&status).Error
 	if err != nil {
 		return status, err

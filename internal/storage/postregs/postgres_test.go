@@ -95,7 +95,7 @@ func (p *postgresSuit) TestRepositoryCreate() {
 		p.T().Fatalf("cannout create repository, err: %s", err)
 	}
 
-	cu, err := repository.CreateUser(u.Email, u.UserName, u.FullName)
+	cu, err := repository.CreateUser(u)
 	if err != nil {
 		p.T().Fatalf("we dont expected any error but got %s", err)
 	}
