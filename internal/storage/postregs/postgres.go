@@ -144,13 +144,20 @@ func (r *Repository) CreateVoucherPlan(plan subscription.Plan, voucher subscript
 }
 
 func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserPlan, error) {
+	status := "pause"
+	endDate := time.Now().Add(1000000 * time.Hour)
+	if bpr.TrialRequest {
+		status = "Trial"
+		endDate = time.Now().AddDate(0, 0, 30)
+	}
+
 	userId, err := strconv.Atoi(bpr.UserId)
 	if err != nil {
 		return subscription.UserPlan{}, err
 	}
 
 	var plan subscription.Plan
-	pErr := r.database.Joins("inner join products p on plans.product_id = p.id").Where("product_id=? AND plans.duration=-1", bpr.ProductId).Find(&plan).Error
+	pErr := r.database.Where("product_id=? AND plans.duration=-1", bpr.ProductId).Find(&plan).Error
 	if pErr != nil {
 		return subscription.UserPlan{}, pErr
 	}
@@ -178,13 +185,13 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	UserPlan := subscription.UserPlan{
 		UserId:              userId,
 		PlanId:              int(plan.ID),
-		PlanStatus:          "pause",
+		PlanStatus:          status,
 		Voucher:             voucher.ID,
 		VoucherDiscount:     voucher.Discount,
 		VoucherDiscountType: voucher.DiscountType,
 		Tax:                 tax,
 		StartDate:           time.Now(),
-		EndDate:             time.Now().Add(1000000 * time.Hour), // large number
+		EndDate:             endDate, // large number
 		DeletedAt:           gorm.DeletedAt{},
 	}
 
@@ -237,6 +244,14 @@ func (r *Repository) FetchProductsByVoucherId(voucherId int) (vpp []subscription
 }
 
 func (r *Repository) ChangeUserPlanStatus(status subscription.ChangeStatus) error {
+	var up subscription.UserPlan
+	err := r.database.Where("user_id=? AND plan_id=?", status.UserId, status.PlanId).First(&up).Error
+	if err != nil {
+		return err
+	}
+	if up.PlanStatus == "Trial" && status.Status == "pause" {
+		return errors.New("Can not pause trial plan")
+	}
 	return r.database.Model(&subscription.UserPlan{}).Where("user_id=? AND plan_id=?", status.UserId, status.PlanId).Update("plan_status", status.Status).Error
 }
 

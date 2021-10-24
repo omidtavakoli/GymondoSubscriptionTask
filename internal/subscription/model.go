@@ -36,9 +36,10 @@ type Product struct {
 }
 
 type BuyRequest struct {
-	UserId    string `form:"userId" binding:"required"`
-	ProductId string `form:"productId" binding:"required"`
-	VoucherId int    `form:"voucherId"`
+	UserId       string `form:"userId" binding:"required"`
+	ProductId    string `form:"productId" binding:"required"`
+	VoucherId    int    `form:"voucherId"`
+	TrialRequest bool   `form:"trialReq"`
 }
 
 type ChangeStatus struct {

@@ -98,7 +98,8 @@ func (h *Handler) ChangePlanStatus(c *gin.Context) {
 	//todo: make better response body
 	bpErr := h.SubscriptionService.ChangeUserPlanStatus(changeStatus)
 	if bpErr != nil {
-		c.JSON(http.StatusNotFound, "done")
+		c.JSON(http.StatusBadRequest, GetFailResponse(bpErr.Error(), nil))
+
 		return
 	}
 	c.JSON(http.StatusOK, "done")
