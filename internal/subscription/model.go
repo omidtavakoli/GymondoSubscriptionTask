@@ -38,6 +38,7 @@ type Product struct {
 type BuyRequest struct {
 	UserId    string `form:"userId" binding:"required"`
 	ProductId string `form:"productId" binding:"required"`
+	VoucherId int    `form:"voucherId"`
 }
 
 type ChangeStatus struct {
@@ -61,15 +62,17 @@ type Plan struct {
 
 type UserPlan struct {
 	gorm.Model
-	ID         uint64 `gorm:"primary_key"`
-	UserId     int
-	PlanId     int
-	PlanStatus string `gorm:"default:active"`
-	//Voucher uint64    `gorm:"foreignKey:ID"`
-	Tax       int
-	StartDate time.Time `gorm:"default:current_timestamp"`
-	EndDate   time.Time `gorm:"default:current_timestamp"`
-	DeletedAt gorm.DeletedAt
+	ID                  uint64 `gorm:"primary_key"`
+	UserId              int
+	PlanId              int
+	PlanStatus          string `gorm:"default:active"`
+	Voucher             uint64 `gorm:"foreignKey:ID"`
+	VoucherDiscount     int
+	VoucherDiscountType string
+	Tax                 int
+	StartDate           time.Time `gorm:"default:current_timestamp"`
+	EndDate             time.Time `gorm:"default:current_timestamp"`
+	DeletedAt           gorm.DeletedAt
 }
 
 type Voucher struct {
@@ -97,18 +100,29 @@ type VoucherPlan struct {
 }
 
 type Status struct {
-	Id         int    `json:"id"`
-	Name       string `json:"plan_name"`
-	Price      int    `json:"price"`
-	Discount   int    `json:"discount"`
-	ProductId  int    `json:"product_id"`
-	Duration   int    `json:"duration"`
-	UserId     int    `json:"user_id"`
-	PlanId     int    `json:"plan_id"`
-	PlanStatus string `json:"plan_status"`
-	StartDate  string `json:"start_date"`
-	EndDate    string `json:"end_date"`
-	Tax        int
+	PlanId              int    `json:"plan_id"`
+	PlanDuration        int    `json:"plan_duration"`
+	PlanProduct         int    `json:"plan_product"`
+	PlanDiscount        int    `json:"plan_discount"`
+	PlanPrice           int    `json:"plan_price"`
+	PlanStatus          string `json:"plan_status"`
+	PlanStartDate       string `json:"plan_start_date"`
+	PlanEndDate         string `json:"plan_end_date"`
+	PlanTax             int    `json:"plan_tax"`
+	VoucherDiscount     int    `json:"voucher_discount"`
+	VoucherDiscountType string `json:"voucher_discount_type"`
+}
+
+type VoucherPlanProduct struct {
+	PlanId              int    `json:"plan_id"`
+	PlanDuration        int    `json:"plan_duration"`
+	PlanProduct         int    `json:"plan_product"`
+	PlanDiscount        int    `json:"plan_discount"`
+	PlanPrice           int    `json:"plan_price"`
+	VoucherId           int    `json:"voucher_id"`
+	VoucherDiscount     int    `json:"voucher_discount"`
+	VoucherDiscountType string `json:"voucher_discount_type"`
+	ProductName         string `json:"product_name"`
 }
 
 type CreateVoucherRequest struct {

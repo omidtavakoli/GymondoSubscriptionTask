@@ -144,7 +144,6 @@ func (r *Repository) CreateVoucherPlan(plan subscription.Plan, voucher subscript
 }
 
 func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserPlan, error) {
-	//todo: separate this func logics
 	userId, err := strconv.Atoi(bpr.UserId)
 	if err != nil {
 		return subscription.UserPlan{}, err
@@ -157,17 +156,36 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	}
 	//SELECT plans.id FROM "plans" inner join products p on plans.product_id = p.id WHERE product_id='22' AND plans.name='LifeTime' AND plans."deleted_at" IS NULL
 
+	var voucherPlan subscription.VoucherPlan
+	var voucher subscription.Voucher
+
+	//validate voucher
+	vErr := r.database.First(&voucher, bpr.VoucherId).Error
+	if vErr != nil {
+		return subscription.UserPlan{}, vErr
+	} else {
+		if time.Now().Before(voucher.StartDate) || voucher.EndDate.Before(time.Now()) {
+			return subscription.UserPlan{}, errors.New("voucher is not valid")
+		}
+		vpErr := r.database.Where("voucher_id=? AND plan_id=?", bpr.VoucherId, plan.ID).Find(&voucherPlan).Error
+		if vpErr != nil {
+			return subscription.UserPlan{}, vpErr
+		}
+	}
+
 	tax := taxCalculator(userId)
 
 	UserPlan := subscription.UserPlan{
-		UserId:     userId,
-		PlanId:     int(plan.ID),
-		PlanStatus: "pause",
-		//Voucher:  0,
-		Tax:       tax,
-		StartDate: time.Now(),
-		EndDate:   time.Now().Add(1000000 * time.Hour), // large number
-		DeletedAt: gorm.DeletedAt{},
+		UserId:              userId,
+		PlanId:              int(plan.ID),
+		PlanStatus:          "pause",
+		Voucher:             voucher.ID,
+		VoucherDiscount:     voucher.Discount,
+		VoucherDiscountType: voucher.DiscountType,
+		Tax:                 tax,
+		StartDate:           time.Now(),
+		EndDate:             time.Now().Add(1000000 * time.Hour), // large number
+		DeletedAt:           gorm.DeletedAt{},
 	}
 
 	resp := r.database.FirstOrCreate(&UserPlan, subscription.UserPlan{UserId: userId, PlanId: int(plan.ID)})
@@ -179,7 +197,43 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 }
 
 func (r *Repository) FetchPlansByUserId(userId int) (status []subscription.Status, err error) {
-	return status, r.database.Raw(fmt.Sprintf("SELECT *  FROM plans inner join user_plans p on p.plan_id = plans.id WHERE p.user_id=%d", userId)).Scan(&status).Error
+	err = r.database.Raw(fmt.Sprintf(`SELECT pl.id as plan_id, pl.duration as plan_duration, 
+pl.product_id as plan_product, pl.discount as plan_discount, pl.price as plan_price, 
+up.plan_status as plan_status,up.start_date as plan_start_date, 
+up.end_date as plan_end_date, up.tax as plan_tax, v.discount as voucher_discount, 
+v.discount_type as voucher_discount_type FROM plans as pl 
+inner join user_plans up on up.plan_id = pl.id 
+inner join vouchers v on v.id = up.voucher 
+WHERE up.user_id=%d`, userId)).Scan(&status).Error
+	if err != nil {
+		return status, err
+	}
+	return status, nil
+}
+
+func (r *Repository) FetchProductsByVoucherId(voucherId int) (vpp []subscription.VoucherPlanProduct, err error) {
+	err = r.database.Raw(fmt.Sprintf(`SELECT
+       pl.id as plan_id,
+       pl.duration as plan_duration,
+       pl.product_id as plan_product,
+       pl.discount as plan_discount,
+       pl.price as plan_price,
+       v.id as voucher_id,
+       v.discount as voucher_discount,
+       v.discount_type as voucher_discount_type,
+        p.name as product_name
+       FROM vouchers as v
+    inner join voucher_plans vp
+        on vp.voucher_id = v.id
+    inner join plans pl
+         on pl.id = vp.plan_id
+    inner join products p
+        on pl.product_id = p.id
+    WHERE v.id = %d`, voucherId)).Scan(&vpp).Error
+	if err != nil {
+		return vpp, err
+	}
+	return vpp, nil
 }
 
 func (r *Repository) ChangeUserPlanStatus(status subscription.ChangeStatus) error {
