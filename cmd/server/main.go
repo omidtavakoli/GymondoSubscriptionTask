@@ -64,7 +64,6 @@ func main() {
 		loggy.Fatal(errors.WithMessage(err, op))
 	}
 	loggy.Infof("[OK] Hostname acquired :%s", hostname)
-	loggy.Infof("Service Name: %s", cfg.Server)
 
 	// Commit, BuildTime
 	loggy.Infof("[OK] Commit Number:%s, Build Time: %s", GitCommit, BuildTime)
