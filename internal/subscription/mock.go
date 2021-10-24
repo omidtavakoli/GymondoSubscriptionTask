@@ -98,19 +98,19 @@ func (s service) voucherGenerator() {
 			}
 
 			//	make invalid voucher
-			name2 := gofakeit.BeerName()
-			cvr2 := CreateVoucherRequest{
-				Name:         name2,
-				PlanId:       plan.ID,
-				Discount:     rand.Intn(30),
-				DiscountType: discountTypes[i%2],
-				StartDate:    time.Now().Add(-time.Hour * 100),
-				EndDate:      time.Now().Add(-time.Hour * 24),
-			}
-			_, err2 := s.psql.CreateVoucher(cvr2)
-			if err2 != nil {
-				s.logger.Errorf("err creating voucher:%s", err2)
-			}
+			//name2 := gofakeit.BeerName()
+			//cvr2 := CreateVoucherRequest{
+			//	Name:         name2,
+			//	PlanId:       plan.ID,
+			//	Discount:     rand.Intn(30),
+			//	DiscountType: discountTypes[i%2],
+			//	StartDate:    time.Now().Add(-time.Hour * 100),
+			//	EndDate:      time.Now().Add(-time.Hour * 24),
+			//}
+			//_, err2 := s.psql.CreateVoucher(cvr2)
+			//if err2 != nil {
+			//	s.logger.Errorf("err creating voucher:%s", err2)
+			//}
 		}
 	}
 }
@@ -128,10 +128,10 @@ func (s service) voucherPlanGenerator() {
 	}
 	rand.Seed(time.Now().Unix())
 	//egt random list of numbers
-	plansKeys := rand.Perm(len(plans)+10)
-	vouchersKeys := rand.Perm(len(vouchers)+10)
+	plansKeys := rand.Perm(len(plans))
+	vouchersKeys := rand.Perm(len(vouchers))
 
-	for i := 0; i < len(plans)/5; i++ {
+	for i := 0; i < len(plans); i++ {
 		pk := plansKeys[i]
 		vk := vouchersKeys[i]
 		_, err := s.psql.CreateVoucherPlan(plans[pk], vouchers[vk])
