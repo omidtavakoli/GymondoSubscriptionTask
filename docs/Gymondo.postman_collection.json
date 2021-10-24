@@ -52,7 +52,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8190/v1/product/3",
+					"raw": "localhost:8190/v1/product/13",
 					"host": [
 						"localhost"
 					],
@@ -60,7 +60,7 @@
 					"path": [
 						"v1",
 						"product",
-						"3"
+						"13"
 					]
 				},
 				"description": "I can fetch a single product"
@@ -73,7 +73,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8190/v1/buy_product?userId=7&productId=3",
+					"raw": "localhost:8190/v1/buy_product?userId=3&productId=10&voucherId=7&trialReq=true",
 					"host": [
 						"localhost"
 					],
@@ -85,11 +85,19 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "7"
+							"value": "3"
 						},
 						{
 							"key": "productId",
-							"value": "3"
+							"value": "10"
+						},
+						{
+							"key": "voucherId",
+							"value": "7"
+						},
+						{
+							"key": "trialReq",
+							"value": "true"
 						}
 					]
 				},
@@ -103,7 +111,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8190/v1/my_plan/7",
+					"raw": "localhost:8190/v1/my_plan/3",
 					"host": [
 						"localhost"
 					],
@@ -111,7 +119,7 @@
 					"path": [
 						"v1",
 						"my_plan",
-						"7"
+						"3"
 					]
 				},
 				"description": "I want to fetch the following informations related to my subscription (e.g. start date, end date, duration of the subscription, prices, tax)"
@@ -119,12 +127,33 @@
 			"response": []
 		},
 		{
-			"name": "change plan status",
+			"name": "fetch products by voucher",
 			"request": {
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:8190/v1/change_plan_status?userId=1&planId=1&status=cancel",
+					"raw": "localhost:8190/v1/products_by_voucher/3748",
+					"host": [
+						"localhost"
+					],
+					"port": "8190",
+					"path": [
+						"v1",
+						"products_by_voucher",
+						"3748"
+					]
+				},
+				"description": "I can list products with individual voucher"
+			},
+			"response": []
+		},
+		{
+			"name": "change plan status Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8190/v1/change_plan_status?userId=3&planId=60&status=cancel",
 					"host": [
 						"localhost"
 					],
@@ -136,11 +165,11 @@
 					"query": [
 						{
 							"key": "userId",
-							"value": "1"
+							"value": "3"
 						},
 						{
 							"key": "planId",
-							"value": "1"
+							"value": "60"
 						},
 						{
 							"key": "status",
