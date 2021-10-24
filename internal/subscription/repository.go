@@ -8,7 +8,7 @@ type ExternalDriver interface {
 }
 
 type PgSQLRepository interface {
-	CreateUser(email, username, fullname string) (User, error)
+	CreateUser(user User) (User, error)
 	CreateProduct(name string) error
 	CreateVoucher(cvr CreateVoucherRequest) (Voucher, error)
 	CreatePlan(name string, price, discount, durationDays int, product Product) (uint64, error)

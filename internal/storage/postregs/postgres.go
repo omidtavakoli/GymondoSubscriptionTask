@@ -35,12 +35,11 @@ func CreateRepository(db *gorm.DB) (*Repository, error) {
 	return repo, nil
 }
 
-//todo: receive user model instead of raw data
-func (r *Repository) CreateUser(email, username, fullname string) (subscription.User, error) {
+func (r *Repository) CreateUser(user subscription.User) (subscription.User, error) {
 	mu := subscription.User{
-		Email:    email,
-		UserName: username,
-		FullName: fullname,
+		Email:    user.Email,
+		UserName: user.UserName,
+		FullName: user.FullName,
 	}
 	err := r.database.Create(&mu).Error
 	if err != nil {
@@ -161,7 +160,6 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	if pErr != nil {
 		return subscription.UserPlan{}, pErr
 	}
-	//SELECT plans.id FROM "plans" inner join products p on plans.product_id = p.id WHERE product_id='22' AND plans.name='LifeTime' AND plans."deleted_at" IS NULL
 
 	var voucherPlan subscription.VoucherPlan
 	var voucher subscription.Voucher
@@ -169,14 +167,14 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 	//validate voucher
 	vErr := r.database.First(&voucher, bpr.VoucherId).Error
 	if vErr != nil {
-		return subscription.UserPlan{}, vErr
+		return subscription.UserPlan{}, errors.Wrap(vErr, "voucher not found")
 	} else {
 		if time.Now().Before(voucher.StartDate) || voucher.EndDate.Before(time.Now()) {
 			return subscription.UserPlan{}, errors.New("voucher is not valid")
 		}
 		vpErr := r.database.Where("voucher_id=? AND plan_id=?", bpr.VoucherId, plan.ID).Find(&voucherPlan).Error
 		if vpErr != nil {
-			return subscription.UserPlan{}, vpErr
+			return subscription.UserPlan{}, errors.Wrap(vpErr, "voucher is not compatible with this plan")
 		}
 	}
 
@@ -204,14 +202,22 @@ func (r *Repository) BuyProduct(bpr subscription.BuyRequest) (subscription.UserP
 }
 
 func (r *Repository) FetchPlansByUserId(userId int) (status []subscription.Status, err error) {
-	err = r.database.Raw(fmt.Sprintf(`SELECT pl.id as plan_id, pl.duration as plan_duration, 
-pl.product_id as plan_product, pl.discount as plan_discount, pl.price as plan_price, 
-up.plan_status as plan_status,up.start_date as plan_start_date, 
-up.end_date as plan_end_date, up.tax as plan_tax, v.discount as voucher_discount, 
-v.discount_type as voucher_discount_type FROM plans as pl 
-inner join user_plans up on up.plan_id = pl.id 
-inner join vouchers v on v.id = up.voucher 
-WHERE up.user_id=%d`, userId)).Scan(&status).Error
+	err = r.database.Raw(fmt.Sprintf(`SELECT 
+	pl.id as plan_id, 
+	pl.duration as plan_duration, 
+	pl.product_id as plan_product, 
+	pl.discount as plan_discount, 
+	pl.price as plan_price, 
+	up.plan_status as plan_status,
+	up.start_date as plan_start_date, 
+	up.end_date as plan_end_date, 
+	up.tax as plan_tax, 
+	v.discount as voucher_discount, 
+	v.discount_type as voucher_discount_type 
+	FROM plans as pl 
+	inner join user_plans up on up.plan_id = pl.id 
+	inner join vouchers v on v.id = up.voucher 
+	WHERE up.user_id=%d`, userId)).Scan(&status).Error
 	if err != nil {
 		return status, err
 	}
@@ -256,6 +262,6 @@ func (r *Repository) ChangeUserPlanStatus(status subscription.ChangeStatus) erro
 }
 
 func taxCalculator(userId int) int {
-	//todo: calculate tax based on country
+	//calculate tax based on country
 	return 10
 }

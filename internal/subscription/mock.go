@@ -2,6 +2,7 @@ package subscription
 
 import (
 	"github.com/brianvoe/gofakeit"
+	"gorm.io/gorm"
 	"math/rand"
 	"time"
 )
@@ -17,10 +18,15 @@ func (s service) DummyDataGenerator() error {
 
 func (s service) userGenerator(count int) {
 	for i := 0; i < count; i++ {
-		email := gofakeit.Email()
-		username := gofakeit.BeerName()
-		fullName := gofakeit.Name()
-		cu, err := s.psql.CreateUser(email, username, fullName)
+		user := User{
+			Email:     gofakeit.Email(),
+			UserName:  gofakeit.BeerName(),
+			FullName:  gofakeit.Name(),
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
+			DeletedAt: gorm.DeletedAt{},
+		}
+		cu, err := s.psql.CreateUser(user)
 		if err != nil {
 			s.logger.Errorf("err creating user:%s", err)
 		} else {
